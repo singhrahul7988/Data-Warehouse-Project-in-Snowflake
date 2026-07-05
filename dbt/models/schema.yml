@@ -1,0 +1,184 @@
+version: 2
+
+models:
+  - name: stg_cidades
+    columns:
+      - name: id_cidades
+        tests:
+          - not_null
+          - unique
+      - name: id_estados
+        tests:
+          - not_null
+
+  - name: stg_clientes
+    columns:
+      - name: id_clientes
+        tests:
+          - not_null
+          - unique
+      - name: id_concessionarias
+        tests:
+          - not_null
+
+  - name: stg_concessionarias
+    columns:
+      - name: id_concessionarias
+        tests:
+          - not_null
+          - unique
+      - name: id_cidades
+        tests:
+          - not_null
+
+  - name: stg_estados
+    columns:
+      - name: id_estados
+        tests:
+          - not_null
+          - unique
+      - name: sigla
+        tests:
+          - not_null
+
+  - name: stg_veiculos
+    columns:
+      - name: id_veiculos
+        tests:
+          - not_null
+          - unique
+      - name: valor
+        tests:
+          - not_null
+
+  - name: stg_vendas
+    columns:
+      - name: id_vendas
+        tests:
+          - not_null
+          - unique
+      - name: id_veiculos
+        tests:
+          - not_null
+      - name: id_concessionarias
+        tests:
+          - not_null
+      - name: id_vendedores
+        tests:
+          - not_null
+      - name: id_clientes
+        tests:
+          - not_null
+
+  - name: stg_vendedores
+    columns:
+      - name: id_vendedores
+        tests:
+          - not_null
+          - unique
+      - name: id_concessionarias
+        tests:
+          - not_null
+
+  - name: dim_cidades
+    columns:
+      - name: cidade_id
+        tests:
+          - not_null
+          - unique
+      - name: estado_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_estados')
+              field: estado_id
+
+  - name: dim_clientes
+    columns:
+      - name: cliente_id
+        tests:
+          - not_null
+          - unique
+      - name: concessionaria_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_concessionarias')
+              field: concessionaria_id
+
+  - name: dim_concessionarias
+    columns:
+      - name: concessionaria_id
+        tests:
+          - not_null
+          - unique
+      - name: cidade_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_cidades')
+              field: cidade_id
+
+  - name: dim_estados
+    columns:
+      - name: estado_id
+        tests:
+          - not_null
+          - unique
+      - name: sigla
+        tests:
+          - not_null
+
+  - name: dim_veiculos
+    columns:
+      - name: veiculo_id
+        tests:
+          - not_null
+          - unique
+      - name: valor_sugerido
+        tests:
+          - not_null
+
+  - name: dim_vendedores
+    columns:
+      - name: vendedor_id
+        tests:
+          - not_null
+          - unique
+      - name: concessionaria_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_concessionarias')
+              field: concessionaria_id
+
+  - name: fct_vendas
+    columns:
+      - name: venda_id
+        tests:
+          - not_null
+          - unique
+      - name: veiculo_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_veiculos')
+              field: veiculo_id
+      - name: concessionaria_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_concessionarias')
+              field: concessionaria_id
+      - name: vendedor_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_vendedores')
+              field: vendedor_id
+      - name: cliente_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_clientes')
+              field: cliente_id
